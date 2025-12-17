@@ -216,6 +216,12 @@ public class SetTariffFrame extends javax.swing.JFrame {
 
     private void confirmeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmeButtonActionPerformed
         // TODO add your handling code here:
+         String meterCode =meterCodeTF.getText();
+        
+        if(Validation.isEmpty(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Meter Code First");
+            return;  
+         }
         BillController bc=new BillController();
         String triffSlice=tariffComboBox.getSelectedItem().toString();
         bc.updateTariff(triffSlice);
