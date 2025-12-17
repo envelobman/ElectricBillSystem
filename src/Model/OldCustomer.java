@@ -10,14 +10,14 @@ package Model;
  */
 public class OldCustomer extends Customer {
 
-    public OldCustomer(String nationalId, String firstname,String secondname,String phone, String address, String email,
+    public OldCustomer(String nationalId, String firstname,String secondname,String phone, String region, String email,
                        String meterCode, double lastReading) {
-        super(nationalId, firstname,secondname,phone ,address, email, meterCode, lastReading);
+        super(nationalId, firstname,secondname,phone ,region, email, meterCode, lastReading);
     }
 
     @Override
     public String toString() {
-        return nationalId + "|" + firstname + "|" +secondname + "|"+phone +"|" + address + "|" + email + "|" +
+        return nationalId + "|" + firstname + "|" +secondname + "|"+phone +"|" + region + "|" + email + "|" +
                 meterCode + "|old|" + lastReading;
     }
 }

@@ -12,9 +12,10 @@ public class NewCustomer extends Customer {
 
     private String contractFile; 
 
-    public NewCustomer(String nationalId, String firstname,String secondname,String phone ,String region, String email,String contractFile) {
+    public NewCustomer(String nationalId, String firstname,String secondname,String phone ,String region, String email,
+                       String meterCode, String contractFile) {
 
-        super(nationalId,firstname,secondname,phone ,region, email, "N/A" , 0);
+        super(nationalId, firstname,secondname,phone ,region, email, meterCode, 0);
         this.contractFile = contractFile;
     }
 
@@ -22,7 +23,7 @@ public class NewCustomer extends Customer {
 
     @Override
     public String toString() {
-        return nationalId + "|" + firstname + "|" + secondname+ "|"+phone +"|"+ address + "|" + email + "|" +
+        return nationalId + "|" + firstname + "|" + secondname+ "|"+phone +"|"+ region + "|" + email + "|" +
                 meterCode + "|new|" + contractFile + "|" + lastReading;
     }
 }

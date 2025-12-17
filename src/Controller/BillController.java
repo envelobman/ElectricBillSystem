@@ -1,61 +1,140 @@
 package Controller;
+
 import Model.*;
 import DataStorage.*;
 import java.util.*;
 
 public class BillController {
 
-    private final FileManager fm = new FileManager();
-    private final String FILE = "bills.txt";
     private final Tariff tariff = new Tariff();
 
-    public Bill createBill(Customer c, double currentReading, String month) {
+    // ---------- CREATE BILL ----------
+    public Bill createBill(Customer c, double currentReading, String year, String month) {
 
-        double cons = currentReading - c.getLastReading();
-        double amount = tariff.calculateAmount(cons);
+        double consumption = c.calculateConsumption(currentReading);
+        double amount = tariff.calculateAmount(consumption);
 
-        String billId = "" + (int)(Math.random()*9000 + 1000);
+        String billId = "B" + (int)(Math.random() * 9000 + 1000);
 
-        return new Bill(billId, c.getMeterCode(), month,
-                currentReading, cons, amount, false);
+        return new Bill(
+                billId,
+                c.getMeterCode(),
+                year,
+                month,
+                currentReading,
+                consumption,
+                amount,
+                false
+        );
     }
-    public void saveBill(Bill b) {
-        fm.append(FILE, b.toString());
+
+    // ---------- SAVE BILL ----------
+    public void saveBill(Bill bill) {
+        List<Bill> bills = FileManager.readBills();
+        bills.add(bill);
+        FileManager.writeBills(bills);
     }
 
-    public List<Bill> getBillsByMeter(String meter) {
+    // ---------- GET BILLS BY METER ----------
+    public List<Bill> getBillsByMeter(String meterCode) {
+        List<Bill> result = new ArrayList<>();
 
-        List<Bill> list = new ArrayList<>();
+        for (Bill b : FileManager.readBills()) {
+            if (b.toString().contains("|" + meterCode + "|"))
+                result.add(b);
+        }
+        return result;
+    }
 
-        for(String line : fm.readFile(FILE)) {
-            String[] p = line.split("\\|");
-            if(p[1].equals(meter)) {
+    // ---------- PAY BILL ----------
+    public boolean payBill(String billId) {
+        List<Bill> bills = FileManager.readBills();
 
-                Bill b = new Bill(p[0], p[1], p[2], Double.parseDouble(p[3]),
-                        Double.parseDouble(p[4]), Double.parseDouble(p[5]),
-                        Boolean.parseBoolean(p[6]));
-
-                list.add(b);
+        for (Bill b : bills) {
+            if (b.toString().startsWith(billId + "|")) {
+                b.setPaid(true);
+                FileManager.writeBills(bills);
+                return true;
             }
         }
-        return list;
+        return false;
     }
 
-    public String payBill(String billId) {
+    // ---------- TOTAL DUE FOR METER ----------
+    public double getTotalUnpaid(String meterCode) {
+        double sum = 0;
 
-        List<String> all = fm.readFile(FILE);
+        for (Bill b : FileManager.readBills()) {
+            if (b.toString().contains("|" + meterCode + "|") && !b.isPaid())
+                sum += b.getAmount();
+        }
+        return sum;
+    }
 
-        for(int i=0; i<all.size(); i++) {
-            String[] p = all.get(i).split("\\|");
+    // ---------- GENERATE BILL TEXT ----------
+    public String generateBillText(String meterCode) {
 
-            if(p[0].equals(billId)) {
-                p[6] = "true";
-                all.set(i, String.join("|", p));
-                fm.writeFile(FILE, all);
-                return "Bill paid";
+        Customer customer = null;
+        Bill lastBill = null;
+
+        for (Customer c : FileManager.readCustomers()) {
+            if (c.getMeterCode().equals(meterCode)) {
+                customer = c;
+                break;
             }
         }
 
-        return "Bill not found";
+        for (Bill b : FileManager.readBills()) {
+            if (b.toString().contains("|" + meterCode + "|"))
+                lastBill = b;
+        }
+if (customer == null || lastBill == null)
+            return "Meter not found";
+
+        return
+                "------- ELECTRICITY BILL -------\n" +
+        
+                "Customer Name : " + customer.getfirstName() + " " + customer.getsecondName() + "\n" +
+                "Meter Code    : " + meterCode + "\n" +
+                "Month         : " + lastBill.toString().split("\\|")[3] + "\n" +
+                "Amount        : " + lastBill.getAmount() + " EGP\n" +
+                "Status        : " + (lastBill.isPaid() ? "PAID" : "UNPAID") + "\n" +
+                "--------------------------------";
     }
+    public String updateTariff(String newTariff) {
+
+    if (Validation.isEmpty(newTariff))
+        return "Tariff is required";
+
+    List<String> lines = new ArrayList<>();
+    lines.add(newTariff);
+
+    FileManager.writeFile("bills.txt", lines);
+
+    return "Tariff updated successfully";
+}
+
+    
+    public String generateBillAmount(String meterCode) {
+
+    if (Validation.isEmpty(meterCode))
+        return null;
+
+    Customer c = new CustomerController().getCustomer(meterCode);
+    if (c == null)
+        return null;
+
+    // آخر قراءة
+    double lastReading = c.getLastReading();
+
+    // القراءة الشهرية
+    double currentReading = lastReading + 100;
+
+    double consumption = currentReading - lastReading;
+
+    Tariff tariff = new Tariff();
+    double amount = tariff.calculateAmount(consumption);
+
+    return String.valueOf(amount);
+}
 }

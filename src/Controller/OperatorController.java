@@ -1,105 +1,94 @@
 package Controller;
-import Model.*;
+
 import DataStorage.*;
+import Model.*;
 import java.util.*;
 
 public class OperatorController {
 
-    private final FileManager fm = new FileManager();
-    private final String FILE = "meters.txt";
-    private Meter parse(String line) {
-        String[] p = line.split("\\|");
-        return new Meter(p[0], Double.parseDouble(p[1]),
-                Boolean.parseBoolean(p[2]));
-    }
+    // ---------- UPDATE METER READING ----------
+    public String updateMeter(Meter m, double newReading) {
 
-    public String updateMeter(String meterCode, double newReading) {
-
-        if(!Validation.isPositive(newReading))
+        if (!Validation.isPositive(newReading))
             return "Invalid Reading";
 
-        List<String> all = fm.readFile(FILE);
+        m.updateReading(newReading);
+        saveMeter(m);
+        return "Meter updated";
+    }
 
-        for(int i=0; i<all.size(); i++) {
-            String[] p = all.get(i).split("\\|");
+    // ---------- ACTIVATE / DEACTIVATE ----------
+    public String activateMeter(Meter m) {
+        m.activate();
+        saveMeter(m);
+        return "Meter activated";
+    }
 
-            if(p[0].equals(meterCode)) {
-                Meter m = parse(all.get(i));
-                m.updateReading(newReading);
-                all.set(i, m.toString());
-                fm.writeFile(FILE, all);
-                return "Meter updated";
+    public String deactivateMeter(Meter m) {
+        m.deactivate();
+        saveMeter(m);
+        return "Meter deactivated";
+    }
+
+    // ---------- CANCEL CUSTOMER ----------
+    public String cancelCustomer(String meterCode) {
+        List<Customer> customers = FileManager.readCustomers();
+        boolean removed = customers.removeIf(c -> c.getMeterCode().equals(meterCode));
+        if (removed) {
+            FileManager.writeCustomers(customers);
+            return "Customer cancelled";
+        }
+        return "Customer not found";
+    }
+
+    // ---------- SEARCH CUSTOMER ----------
+    public Customer searchCustomer(String meterCode) {
+        for (Customer c : FileManager.readCustomers()) {
+            if (c.getMeterCode().equals(meterCode))
+                return c;
+        }
+        return null;
+    }
+
+    // ---------- SAVE METER ----------
+    public void saveMeter(Meter m) {
+        List<Meter> meters = FileManager.readMeters();
+        boolean found = false;
+
+        for (int i = 0; i < meters.size(); i++) {
+            if (meters.get(i).getMeterCode().equals(m.getMeterCode())) {
+                meters.set(i, m);
+                found = true;
+                break;
             }
         }
 
-        return "Meter not found";
+        if (!found) meters.add(m);
+        FileManager.writeMeters(meters);
     }
 
-
-    public String deactivate(String meterCode) {
-        List<String> all = fm.readFile(FILE);
-
-        for(int i=0; i<all.size(); i++) {
-            String[] p = all.get(i).split("\\|");
-
-            if(p[0].equals(meterCode)) {
-                Meter m = parse(all.get(i));
-                m.deactivate();
-                all.set(i, m.toString());
-                fm.writeFile(FILE, all);
-                return "Meter Deactivated";
-            }
-        }
-
-        return "Not found";
+    // ---------- GET ALL METERS ----------
+    public List<Meter> getAllMeters() {
+        return FileManager.readMeters();
     }
+    public String setCustomerStatus(String customerStatus) {
 
+    // validation
+    if (customerStatus == null || customerStatus.isEmpty())
+        return "Invalid status";
 
-    public String activate(String meterCode) {
-        List<String> all = fm.readFile(FILE);
+    if (!customerStatus.equalsIgnoreCase("activate") &&
+        !customerStatus.equalsIgnoreCase("deactivate") &&
+        !customerStatus.equalsIgnoreCase("cancel"))
+        return "Unknown status";
 
-        for(int i=0; i<all.size(); i++) {
-            String[] p = all.get(i).split("\\|");
-
-            if(p[0].equals(meterCode)) {
-                Meter m = parse(all.get(i));
-                m.activate();
-                all.set(i, m.toString());
-                fm.writeFile(FILE, all);
-                return "Meter Activated";
-            }
-        }
-
-        return "Not found";
-    }
-    public String setCustomerStatus(String customerCustomerState, String deactivate) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    public String updateTariff(String triffSlice) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    public String[] searchForCustomer(String text) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    public String generateBill(String text) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-       
-    private String getTotalunpaidBills() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private String getTotalpaidBills() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private String getTotalAmount() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private String getTotalBills() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    String status = customerStatus.toLowerCase();
     
-}
+    List<String> lines = new ArrayList<>();
+    lines.add(status);
 
+    FileManager.writeFile("customer.txt", lines);
+
+    return status;
+}
+}

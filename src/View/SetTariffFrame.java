@@ -198,9 +198,10 @@ public class SetTariffFrame extends javax.swing.JFrame {
 
     private void confirmeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmeButtonActionPerformed
         // TODO add your handling code here:
+        OperatorController oc=new OperatorController();
         String triffSlice=tariffComboBox.getSelectedItem().toString();
-        updateTariff(triffSlice);
-        
+        oc.updateTariff(triffSlice);
+        currentTariffTF.setText(triffSlice);
     }//GEN-LAST:event_confirmeButtonActionPerformed
 
     /**

@@ -207,17 +207,9 @@ public class NewCustomerGui extends javax.swing.JFrame {
     private void submitBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBActionPerformed
         // TODO add your handling code here:
         
-        if (firstNameTF.getText().isEmpty() ||
-        lastNameTF.getText().isEmpty() ||
-        nationalIdTF.getText().isEmpty() ||
-        phoneNumberTF.getText().isEmpty() ||
-        emailAddressTF.getText().isEmpty() ||
-        contractTF.getText().isEmpty() ) {
 
-        JOptionPane.showMessageDialog(this, "Please fill all fields");
-        return;
-    }
-
+    Validation Validation=new Validation();
+    
     String fName = firstNameTF.getText();
     String lName = lastNameTF.getText() ;
     String nationalId = nationalIdTF.getText();
@@ -225,9 +217,25 @@ public class NewCustomerGui extends javax.swing.JFrame {
     String region = regionCB.getSelectedItem().toString();
     String emailAddress = emailAddressTF.getText();
     String contract = contractTF.getText();
-
-    NewCustomer c = new NewCustomer(nationalId,fName,lName,phoneNum,region,emailAddress,contract);
-
+    
+    if(Validation.isEmpty(fName)||Validation.isEmpty(lName)||Validation.isEmpty(nationalId)||Validation.isEmpty(phoneNum)||Validation.isEmpty(region)||Validation.isEmpty(emailAddress)||Validation.isEmpty(contract)){
+        JOptionPane.showMessageDialog(this, "Please fill all fields");
+        return;
+    }
+    if(Validation.isNumber(nationalId)||Validation.isNumber(phoneNum)){
+        JOptionPane.showMessageDialog(this, "Please Enter numbers only");
+        return;
+    }
+    if(Validation.isPositive(Double.parseDouble(nationalId))||Validation.isPositive(Double.parseDouble(phoneNum))){
+        JOptionPane.showMessageDialog(this, "Please Enter numbers only");
+        return;
+    }
+    if(Validation.isValidEmail(emailAddressTF.getText())){
+        JOptionPane.showMessageDialog(this, "Enter a Valid Email");
+        return;
+    }
+    
+    NewCustomer c = new NewCustomer(nationalId,fName,lName,phoneNum,region,emailAddress,null,contract);
     CustomerController cc = new CustomerController();
     cc.addCustomer(c);
  

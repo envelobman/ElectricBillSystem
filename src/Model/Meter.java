@@ -43,6 +43,10 @@ public void activate() {
     this.active = true;
 }
 
+    public Object getMeterCode() {
+        return meterCode;
+    }
+
 }
 
 /*   شكل (file)

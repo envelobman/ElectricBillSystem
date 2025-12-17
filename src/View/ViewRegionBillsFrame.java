@@ -36,14 +36,6 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         billsTable = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
-        totalBillsTF = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        totalAmountTF = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        paidBillsTF = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        unpaidBillsTF = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -71,7 +63,7 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Customer Name", "Meter Number", "National ID", "Status", "Amount (EGP)"
+                "Customer Name", "Meter Number", "National ID", "Bill Status", "Bill Amount  (EGP)"
             }
         ) {
             Class[] types = new Class [] {
@@ -91,41 +83,6 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(billsTable);
 
-        jLabel3.setText("Total Bills:");
-
-        totalBillsTF.setEditable(false);
-        totalBillsTF.setBackground(new java.awt.Color(204, 204, 204));
-        totalBillsTF.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                totalBillsTFActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setText("Total Amount:");
-
-        totalAmountTF.setEditable(false);
-        totalAmountTF.setBackground(new java.awt.Color(204, 204, 204));
-        totalAmountTF.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                totalAmountTFActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("Paid bills:");
-
-        paidBillsTF.setEditable(false);
-        paidBillsTF.setBackground(new java.awt.Color(204, 204, 204));
-        paidBillsTF.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                paidBillsTFActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("Unpaid bills:");
-
-        unpaidBillsTF.setEditable(false);
-        unpaidBillsTF.setBackground(new java.awt.Color(204, 204, 204));
-
         jButton2.setText("Back");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -141,45 +98,27 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addGap(16, 16, 16))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel1)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(32, 32, 32)
-                                .addComponent(jButton1))
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(32, 32, 32)
+                        .addComponent(jButton1)
+                        .addContainerGap(276, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalBillsTF, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalAmountTF, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(paidBillsTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(unpaidBillsTF, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addContainerGap())
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton2))
+                            .addComponent(jScrollPane1))
+                        .addGap(16, 16, 16))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -188,19 +127,9 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
                     .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(totalBillsTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(totalAmountTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(paidBillsTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(unpaidBillsTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(46, 46, 46)
                 .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -221,19 +150,11 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
         String totalAmount = getTotalAmount();
         String totalpaidBills = getTotalpaidBills();
         String totalunpaidBills = getTotalunpaidBills();
-        
-        totalBillsTF.setText(totalBills);
-        totalAmountTF.setText(totalAmount);
-        paidBillsTF.setText(totalpaidBills);
-        unpaidBillsTF.setText(totalunpaidBills);
+
         
         
         
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void paidBillsTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paidBillsTFActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_paidBillsTFActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -241,15 +162,6 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
             MainOperator f = new MainOperator();
     f.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void totalAmountTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalAmountTFActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_totalAmountTFActionPerformed
-
-    private void totalBillsTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalBillsTFActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_totalBillsTFActionPerformed
 
     /**
      * @param args the command line arguments
@@ -283,15 +195,7 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField paidBillsTF;
-    private javax.swing.JTextField totalAmountTF;
-    private javax.swing.JTextField totalBillsTF;
-    private javax.swing.JTextField unpaidBillsTF;
     // End of variables declaration//GEN-END:variables
 
 

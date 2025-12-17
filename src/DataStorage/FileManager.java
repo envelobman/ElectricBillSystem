@@ -1,165 +1,149 @@
 package DataStorage;
 
+import Model.Bill;
+import Model.Complaint;
+import Model.Customer;
+import Model.Meter;
+import Model.NewCustomer;
+import Model.OldCustomer;
 import java.io.*;
 import java.util.*;
 
-
 public class FileManager {
-          
-              //FOR CUSTOMERS//
 
-public static List<String> readCustomers(){
-    return readFile("customers.txt");
-}
+    // ---------- GENERIC ----------
+    public static List<String> readFile(String filename) {
+        List<String> lines = new ArrayList<>();
+        File file = new File(filename);
 
-public static void writeCustomers(List<String> lines){
-    writeFile("customers.txt",lines);
-}
+        if (!file.exists())
+            return lines;
 
-public static List<String>  readBills(){
-    return readFile("bills.txt");
-}
-
-public static void writeBills(List<String> lines){
-    writeFile("bills.txt",lines);
-}
-    
-// ----- METERS -----
-public static List<String> readMeters() {
-    return readFile("meters.txt");
-}
-
-public static void writeMeters(List<String> lines) {
-    writeFile("meters.txt", lines);
-}
-
-// ----- COMPLAINTS -----
-public static List<String> readComplaints() {
-    return readFile("complaints.txt");
-}
-
-public static void writeComplaints(List<String> lines) {
-    writeFile("complaints.txt", lines);
-}
-
-// ----- USERS -----
-public static List<String> readUsers() {
-    return readFile("users.txt");
-}
-
-public static void writeUsers(List<String> lines) {
-    writeFile("users.txt", lines);
-}
-    
-
-
-               //FILE FUNCTIONS//
-
-    public static List<String> readFile(String filename){
-    List<String> lines= new ArrayList<>();
-    try(BufferedReader br= new BufferedReader(new FileReader(filename))){
-        String line;
-        while ((line=br.readLine())!=null){
-            lines.add(line);        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null)
+                lines.add(line);
+        } catch (IOException e) {
+            System.out.println("ERROR READING " + filename);
+        }
+        return lines;
     }
-    catch (IOException e){
-        System.out.println("ERROR READING FILE "+filename+":"+e.getMessage());
-    }
-    return lines;}
-    
-    public static void writeFile(String filename,List<String> lines){
-    try(BufferedWriter bw= new BufferedWriter(new FileWriter(filename))){
-            for(String line:lines){
-                bw.write(line);
+
+    public static void writeFile(String filename, List<String> lines) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
+            for (String l : lines) {
+                bw.write(l);
                 bw.newLine();
-            }}
-    catch (IOException e){
-             System.out.println("ERROR WRITING FILE "+filename+":"+e.getMessage());
-                }    
-        }
-
-    public static void updateCustomer(String meterCode, String newLine) {
-    List<String> customers = readCustomers(); // read existing lines
-    for (int i = 0; i < customers.size(); i++) {
-        if (customers.get(i).startsWith(meterCode + ",")) {
-            customers.set(i, newLine); // update line
-            break;
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR WRITING " + filename);
         }
     }
-    writeCustomers(customers); 
-    }
 
-    public static void deleteCustomer(String meterCode) {
-    List<String> customers = readCustomers();
-    customers.removeIf(line -> line.startsWith(meterCode + ",")); 
-    writeCustomers(customers); 
-    }
+    // ---------- CUSTOMERS ----------
+    public static List<Customer> readCustomers() {
+        List<Customer> list = new ArrayList<>();
+        for (String line : readFile("customers.txt")) {
+            String[] p = line.split("\\|");
 
-    public static void updateBill(String billID, String newLine) {
-    List<String> bills = readBills();
-    for (int i = 0; i < bills.size(); i++) {
-        if (bills.get(i).startsWith(billID + ",")) {
-            bills.set(i, newLine);
-            break;
+            if (p[7].equals("old"))
+                list.add(new OldCustomer(
+                        p[0], p[1], p[2], p[3],
+                        p[4], p[5], p[6],
+                        Double.parseDouble(p[8])
+                ));
+            else
+                list.add(new NewCustomer(
+                        p[0], p[1], p[2], p[3],
+                        p[4], p[5], p[6],
+                        p[8]
+                ));
         }
-    }
-    writeBills(bills);
+        return list;
     }
 
-    public static void deleteBill(String billID) {
-    List<String> bills = readBills();
-    bills.removeIf(line -> line.startsWith(billID + ","));
-    writeBills(bills);
+    public static void writeCustomers(List<Customer> customers) {
+        List<String> lines = new ArrayList<>();
+        for (Customer c : customers)
+            lines.add(c.toString());
+        writeFile("customers.txt", lines);
     }
- 
-    public static void updateUser(String username, String newLine) {
-    List<String> users = readUsers();
-    for (int i = 0; i < users.size(); i++) {
-        if (users.get(i).startsWith(username + ",")) {
-            users.set(i, newLine);
-            break;
+
+    public static void updateCustomer(Customer updated) {
+        List<Customer> customers = readCustomers();
+        for (int i = 0; i < customers.size(); i++) {
+            if (customers.get(i).getId().equals(updated.getId())) {
+                customers.set(i, updated);
+                break;
+            }
         }
-    }
-    writeUsers(users);
-}
-
-public static void deleteUser(String username) {
-    List<String> users = readUsers();
-    users.removeIf(line -> line.startsWith(username + ","));
-    writeUsers(users);
-}
-
-// ---------- TESTING ----------
-    public static void main(String[] args) {
-       List<String> customers = readCustomers();
-
-         //Test writing (In Customers txt file)
-        customers.add("123,Ali,Street 5,ali@email.com,320,380,");
-        customers.add("124,Ali,Street 5,ali@email.com,320,380,");
-        customers.add("125,Ali,Street 5,ali@email.com,320,380,");
         writeCustomers(customers);
-    
-////        //Test Updating customer
-String newLine = "1024,Mohamed Saleh,Street 10,mohamed@gmail.com,100,180"; 
-    updateCustomer("123", newLine);
-    
-//    //  Test deleting Customer
-    deleteCustomer("124");
-
-// Test reading and printing file
-    customers=readCustomers();
-    for (String c : customers) {
-            System.out.println(c);
-        }
-             
-   
-    
     }
 
-    public void append(String FILE, String toString) {
-//        ??
+    public static void deleteCustomer(String nationalId) {
+        List<Customer> customers = readCustomers();
+        customers.removeIf(c -> c.getId().equals(nationalId));
+        writeCustomers(customers);
+    }
+
+    // ---------- BILLS ----------
+    public static List<Bill> readBills() {
+        List<Bill> bills = new ArrayList<>();
+        for (String line : readFile("bills.txt")) {
+            String[] p = line.split("\\|");
+            bills.add(new Bill(
+                    p[0], p[1], p[2], p[3],
+                    Double.parseDouble(p[4]),
+                    Double.parseDouble(p[5]),
+                    Double.parseDouble(p[6]),
+                    Boolean.parseBoolean(p[7])
+            ));
+        }
+        return bills;
+    }
+
+    public static void writeBills(List<Bill> bills) {
+        List<String> lines = new ArrayList<>();
+        for (Bill b : bills)
+            lines.add(b.toString());
+        writeFile("bills.txt", lines);
+    }
+
+    // ---------- METERS ----------
+    public static List<Meter> readMeters() {
+        List<Meter> meters = new ArrayList<>();
+        for (String line : readFile("meters.txt")) {
+            String[] p = line.split("\\|");
+            meters.add(new Meter(
+                    p[0],
+                    Double.parseDouble(p[1]),
+                    Boolean.parseBoolean(p[2])
+            ));
+        }
+        return meters;
+    }
+
+    public static void writeMeters(List<Meter> meters) {
+        List<String> lines = new ArrayList<>();
+        for (Meter m : meters)
+            lines.add(m.toString());
+        writeFile("meters.txt", lines);
+    }
+
+    // ---------- COMPLAINTS ----------
+    public static List<Complaint> readComplaints() {
+        List<Complaint> list = new ArrayList<>();
+        for (String line : readFile("complaints.txt")) {
+            String[] p = line.split("\\|");
+            list.add(new Complaint(p[0], p[1], p[2]));
+        }
+        return list;
+    }
+
+    public static void writeComplaints(List<Complaint> complaints) {
+        List<String> lines = new ArrayList<>();
+        for (Complaint c : complaints)
+            lines.add(c.toString());
+        writeFile("complaints.txt", lines);
     }
 }
-
-
-
