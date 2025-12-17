@@ -91,4 +91,51 @@ public class OperatorController {
 
     return status;
 }
+    
+
+    public static String[][] getBillsByRegion(String region) {
+
+        List<String> customers = FileManager.readFile("customers.txt");
+        List<String> bills = FileManager.readFile("bills.txt");
+
+        List<String[]> rows = new ArrayList<>();
+
+        for (String b : bills) {
+            String[] bp = b.split("\\|");
+            String meterCode = bp[1];
+            String amount = bp[5];
+            String status = bp[6].equals("true") ? "Paid" : "Unpaid";
+
+            for (String c : customers) {
+                String[] cp = c.split("\\|");
+
+                String customerRegion = cp[4];
+                String customerMeter = cp[6];
+
+                if (customerMeter.equals(meterCode)
+                        && customerRegion.equalsIgnoreCase(region)) {
+
+                    String customerName = cp[1] + " " + cp[2];
+                    String nationalId = cp[0];
+
+                    rows.add(new String[]{
+                        customerName,
+                        meterCode,
+                        nationalId,
+                        status,
+                        amount
+                    });
+                }
+            }
+        }
+
+        // تحويل List → 2D Array
+        String[][] result = new String[rows.size()][5];
+        for (int i = 0; i < rows.size(); i++) {
+            result[i] = rows.get(i);
+        }
+
+        return result;
+    }
 }
+

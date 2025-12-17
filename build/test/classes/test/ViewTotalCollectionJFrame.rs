@@ -1,0 +1,2 @@
+com.mycompany.admin.ViewTotalCollectionJFrame$1
+com.mycompany.admin.ViewTotalCollectionJFrame
