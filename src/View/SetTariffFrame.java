@@ -35,7 +35,7 @@ public class SetTariffFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        meterCodeTf = new javax.swing.JTextField();
+        meterCodeTF = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         fullNameTF = new javax.swing.JTextField();
@@ -119,7 +119,7 @@ public class SetTariffFrame extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel3)
                                         .addGap(18, 18, 18)
-                                        .addComponent(meterCodeTf, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(meterCodeTF, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(searchButton)
@@ -140,7 +140,7 @@ public class SetTariffFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(meterCodeTf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(meterCodeTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton))
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -172,36 +172,56 @@ public class SetTariffFrame extends javax.swing.JFrame {
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
-        try {
-        OperatorController oc = new OperatorController();
-        String[] data = cc.searchForCustomer(meterCodeTf.getText()); // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
+//        try {
+           
+            String meterCode =meterCodeTF.getText();
+        // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
+        if(Validation.isEmpty(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Meter Code");
+            return;  
+            }
+        if(Validation.isNumber(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+        
+        if(Validation.isPositive(Double.parseDouble(meterCode))){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+      
+        CustomerController cc = new CustomerController();
+        String[] data = cc.searchForCustomer(meterCode);
+        
         if (data == null) {
             JOptionPane.showMessageDialog(this, "Meter not found");
             return;
         }
         
         String fullName = data[1] + " " + data[2];
-        String currentTariff = data[11];
+        String currentTariff = data[12];
 
         fullNameTF.setText(fullName);  
         currentTariffTF.setText(currentTariff);
 
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Invalid number format in meter code",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE
-        );
-    }
+//    } catch (NumberFormatException e) {
+//        JOptionPane.showMessageDialog(
+//            this,
+//            "Invalid number format in meter code",
+//            "Input Error",
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//    }
     }//GEN-LAST:event_searchButtonActionPerformed
 
     private void confirmeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmeButtonActionPerformed
         // TODO add your handling code here:
-        OperatorController oc=new OperatorController();
+        BillController bc=new BillController();
         String triffSlice=tariffComboBox.getSelectedItem().toString();
-        oc.updateTariff(triffSlice);
+        bc.updateTariff(triffSlice);
         currentTariffTF.setText(triffSlice);
+        JOptionPane.showMessageDialog(
+            this,"The Tariff Updated Successfully");
     }//GEN-LAST:event_confirmeButtonActionPerformed
 
     /**
@@ -240,7 +260,7 @@ public class SetTariffFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JTextField meterCodeTf;
+    private javax.swing.JTextField meterCodeTF;
     private javax.swing.JButton searchButton;
     private javax.swing.JComboBox<String> tariffComboBox;
     // End of variables declaration//GEN-END:variables

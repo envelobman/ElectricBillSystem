@@ -172,49 +172,70 @@ public class CancelSubscriptionFrame extends javax.swing.JFrame {
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
-        try {
-        OperatorController oc = new OperatorController();
-        String[] data = oc.searchForCustomer(meterCodeTF.getText()); // nationalId|firstName|lastName|phone|region|email|meterCode|billstatus|customer Status|contract|Reading|lastReading|tariff|date|bill
+//        try {
+        String meterCode =meterCodeTF.getText();
+                // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
+        if(Validation.isEmpty(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Meter Code");
+            return;  
+            }
+        if(Validation.isNumber(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+
+        if(Validation.isPositive(Double.parseDouble(meterCode))){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+      
+        CustomerController cc = new CustomerController();
+        String[] data = cc.searchForCustomer(meterCode);
+
         if (data == null) {
             JOptionPane.showMessageDialog(this, "Meter not found");
             return;
         }
         
         String fullName = data[1] + " " + data[2];
-        String customerStatus = data[10];
+        String customerStatus = data[8];
 
         fullNameTF.setText(fullName);  
         customerStatusTF.setText(customerStatus);
 
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Invalid number format in meter code",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE
-        );
-    }
+//    } catch (NumberFormatException e) {
+//        JOptionPane.showMessageDialog(
+//            this,
+//            "Invalid number format in meter code",
+//            "Input Error",
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//    }
     }//GEN-LAST:event_searchButtonActionPerformed
 
     private void activateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_activateButtonActionPerformed
         // TODO add your handling code here:
+        OperatorController oc=new OperatorController();
+        
         String customerstatus;
-        customerstatus=setCustomerStatus("Activated");
+        customerstatus=oc.setCustomerStatus("Activated");
         customerStatusTF.setText(customerstatus);
 
     }//GEN-LAST:event_activateButtonActionPerformed
 
     private void deactivateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deactivateButtonActionPerformed
         // TODO add your handling code here:
+        OperatorController oc=new OperatorController();
         String customerstatus;
-        customerstatus=setCustomerStatus("deactivated");
+        customerstatus=oc.setCustomerStatus("deactivated");
         customerStatusTF.setText(customerstatus);
     }//GEN-LAST:event_deactivateButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
+        OperatorController oc=new OperatorController();
         String customerstatus;
-        customerstatus=setCustomerStatus("canceled");
+        customerstatus=oc.setCustomerStatus("canceled");
         customerStatusTF.setText(customerstatus);
     }//GEN-LAST:event_cancelButtonActionPerformed
 

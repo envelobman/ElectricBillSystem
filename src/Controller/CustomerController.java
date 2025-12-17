@@ -183,5 +183,15 @@ public class CustomerController {
 
     return "Monthly reading saved successfully";
 }
+    
+public void setNewReading(String meterCode, double monthlyReading) {
+
+
+    String line = meterCode + "|" + monthlyReading;
+
+    List<String> readings = FileManager.readFile("bills.txt");
+    readings.add(line);
+    FileManager.writeFile("bills.txt", readings);
+}
 
 }

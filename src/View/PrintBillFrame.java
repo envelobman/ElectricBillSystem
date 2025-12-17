@@ -147,25 +147,44 @@ public class PrintBillFrame extends javax.swing.JFrame {
 
     private void generateBillButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateBillButtonActionPerformed
         // TODO add your handling code here:
-                try{
-        OperatorController oc = new OperatorController();
-        String[] data = oc.searchForCustomer(meterCodeTF.getText());
+//                try{
+
+            String meterCode =meterCodeTF.getText();
+        // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
+        if(Validation.isEmpty(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Meter Code");
+            return;  
+            }
+        if(Validation.isNumber(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+        
+        if(Validation.isPositive(Double.parseDouble(meterCode))){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+      
+        CustomerController cc = new CustomerController();
+        String[] data = cc.searchForCustomer(meterCode);
+        
         if (data == null) {
             JOptionPane.showMessageDialog(this, "Meter not found");
-            
+            return;
         }
-
-        String billPreview = generateBill(meterCodeTF.getText());
+        
+        BillController bc=new BillController();
+        String billPreview = bc.generateBillText(meterCode);
         billTF.setText(billPreview);
         
-        } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Invalid number format in meter code",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE
-        );
-    }
+//        } catch (NumberFormatException e) {
+//        JOptionPane.showMessageDialog(
+//            this,
+//            "Invalid number format in meter code",
+//            "Input Error",
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//    }
     }//GEN-LAST:event_generateBillButtonActionPerformed
 
     /**

@@ -73,46 +73,42 @@ public class BillController {
 
     // ---------- GENERATE BILL TEXT ----------
     public String generateBillText(String meterCode) {
-
         Customer customer = null;
         Bill lastBill = null;
-
         for (Customer c : FileManager.readCustomers()) {
             if (c.getMeterCode().equals(meterCode)) {
                 customer = c;
                 break;
             }
         }
-
         for (Bill b : FileManager.readBills()) {
-            if (b.toString().contains("|" + meterCode + "|"))
-                lastBill = b;
+            if (b.getMeterCode().equals(meterCode)) {
+                lastBill = b; 
+            }
         }
-if (customer == null || lastBill == null)
+        if (customer == null || lastBill == null)
             return "Meter not found";
 
         return
-                "------- ELECTRICITY BILL -------\n" +
-        
-                "Customer Name : " + customer.getfirstName() + " " + customer.getsecondName() + "\n" +
-                "Meter Code    : " + meterCode + "\n" +
-                "Month         : " + lastBill.toString().split("\\|")[3] + "\n" +
-                "Amount        : " + lastBill.getAmount() + " EGP\n" +
-                "Status        : " + (lastBill.isPaid() ? "PAID" : "UNPAID") + "\n" +
-                "--------------------------------";
+            "------- ELECTRICITY BILL -------\n" +
+            "Customer Name : " + customer.getfirstName() + " " + customer.getsecondName() + "\n" +
+            "Meter Code    : " + meterCode + "\n" +
+            "Month         : " + lastBill.getMonth() + "\n" +
+            "Amount        : " + lastBill.getAmount() + " EGP\n" +
+            "Status        : " + (lastBill.isPaid() ? "PAID" : "UNPAID") + "\n" +
+            "--------------------------------";
     }
-    public String updateTariff(String newTariff) {
 
-    if (Validation.isEmpty(newTariff))
-        return "Tariff is required";
 
-    List<String> lines = new ArrayList<>();
-    lines.add(newTariff);
+        public void updateTariff(String newTariff) {
 
-    FileManager.writeFile("bills.txt", lines);
 
-    return "Tariff updated successfully";
-}
+        List<String> lines = new ArrayList<>();
+        lines.add(newTariff);
+
+        FileManager.writeFile("bills.txt", lines);
+
+    }
 
     
     public String generateBillAmount(String meterCode) {
@@ -136,5 +132,33 @@ if (customer == null || lastBill == null)
     double amount = tariff.calculateAmount(consumption);
 
     return String.valueOf(amount);
+}
+    
+    
+    public void payBillByMeter(String meterCode) {
+    try {
+        List<Bill> bills = FileManager.readBills();
+        boolean updated = false;
+
+        for (Bill b : bills) {
+
+            if (b.getMeterCode().equals(meterCode) && !b.isPaid()) {
+                b.setPaid(true); 
+                b.setAmount(0.0); 
+                updated = true;
+                break;                  
+            }
+        }
+
+        if (updated) {
+            FileManager.writeBills(bills); 
+        } else {
+            System.out.println("No unpaid bill found for meter code: " + meterCode);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("Error while paying bill for meter code: " + meterCode);
+    }
 }
 }

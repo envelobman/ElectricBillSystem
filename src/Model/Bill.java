@@ -47,6 +47,10 @@ public boolean isPaid() {
 public double getAmount() {
     return amount;
 }
+public void setAmount(double amount)
+    {
+        this.amount=amount;
+    }
 
 public void updateReading(double newReading) {
     this.reading = newReading;

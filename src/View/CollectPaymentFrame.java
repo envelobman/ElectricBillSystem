@@ -33,7 +33,7 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        metercodeTF = new javax.swing.JTextField();
+        meterCodeTF = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -105,7 +105,7 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setText("Current Status:");
+        jLabel7.setText("Bill Current Status:");
 
         statusTF.setEditable(false);
         statusTF.setBackground(new java.awt.Color(204, 204, 204));
@@ -163,7 +163,7 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(jLabel3)
                                         .addGap(55, 55, 55)
-                                        .addComponent(metercodeTF))
+                                        .addComponent(meterCodeTF))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -200,7 +200,7 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(metercodeTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(meterCodeTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton))
                 .addGap(54, 54, 54)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,9 +263,28 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
                                                  
 
-    try {
-        OperatorController oc = new OperatorController();
-        String[] data = oc.searchForCustomer(metercodeTF.getText()); // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
+//    try {
+        
+            String meterCode = meterCodeTF.getText();
+        // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
+        if(Validation.isEmpty(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Meter Code");
+            return;  
+            }
+        if(Validation.isNumber(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+        
+        if(Validation.isPositive(Double.parseDouble(meterCode))){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+      
+        CustomerController cc = new CustomerController();
+        String[] data = cc.searchForCustomer(meterCode);
+
+        
         if (data == null) {
             JOptionPane.showMessageDialog(this, "Meter not found");
             return;
@@ -273,34 +292,36 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
 
         String fullName = data[1] + " " + data[2];
 
-        double bill =(Integer.parseInt(data[10]) - Integer.parseInt(data[9]))*Integer.parseInt(data[11]);
+        double bill =(Double.parseDouble(data[11]) - Double.parseDouble(data[10]))*Double.parseDouble(data[12]);
 
-        String billDate = data[12];
-        String currentStatus = data[8];
+        String billDate = data[13];
+        String billCurrentStatus = data[7];
 
         customerNameTF.setText(fullName);
         billDateTF.setText(billDate);
         billTF.setText(String.valueOf(bill));
-        statusTF.setText(currentStatus);
+        statusTF.setText(billCurrentStatus);
 
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Invalid number format in meter code",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE
-        );
-    }
+//    } catch (NumberFormatException e) {
+//        JOptionPane.showMessageDialog(
+//            this,
+//            "Invalid number format in meter code",
+//            "Input Error",
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//    }
     }//GEN-LAST:event_searchButtonActionPerformed
 
     private void cPaymentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cPaymentButtonActionPerformed
         // TODO add your handling code here:
+        String meterCode = meterCodeTF.getText();
+        CustomerController cc = new CustomerController();
+        BillController bc = new BillController();
+        String[] data = cc.searchForCustomer(meterCode);
         
-        OperatorController oc = new OperatorController();
-        String[] data = oc.searchForCustomer(metercodeTF.getText());// nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|lastReading|tariff|date|bill
             
     
-        double bill =(Integer.parseInt(data[10]) - Integer.parseInt(data[9]))*Integer.parseInt(data[11]);
+        double bill =(Double.parseDouble(data[11]) - Double.parseDouble(data[10]))*Double.parseDouble(data[12]);
        
         double paidAmount = 0 ;
         
@@ -308,19 +329,24 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
         paidAmount = Double.parseDouble(paidAmountTF.getText());
        } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this,"Invalid number format in paid amount","Input Error",JOptionPane.ERROR_MESSAGE);}
+       
+        bc.payBillByMeter(meterCode);
+        
+        
+        String[] data2 = cc.searchForCustomer(meterCode);
+        
+        
+       
+        bill = Double.parseDouble(data2[14]);
+        String billCurrentStatus = data2[7];
+        
+        
         
         double change= paidAmount-bill;
-        
-        bill=0;
-        data[13]=bill+"";  //make the bill = 0 because he has paid
-        
-        String currentStatus = data[8];
-        currentStatus="Paid";
-        
         changeTF.setText(change+"");
         
-        billTF.setText(data[13]);
-        statusTF.setText(currentStatus);
+        billTF.setText(bill+"");
+        statusTF.setText(billCurrentStatus);
        
     }//GEN-LAST:event_cPaymentButtonActionPerformed
 
@@ -369,7 +395,7 @@ public class CollectPaymentFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField metercodeTF;
+    private javax.swing.JTextField meterCodeTF;
     private javax.swing.JTextField paidAmountTF;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton searchButton;

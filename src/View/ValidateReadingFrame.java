@@ -218,28 +218,47 @@ public class ValidateReadingFrame extends javax.swing.JFrame {
 
     private void ValidateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValidateButtonActionPerformed
         // TODO add your handling code here:
+//        
+//       try{
+        String newReading = NewReadingTF.getText();
         
-       try{
-        OperatorController oc = new OperatorController();
-        String[] data = oc.searchForCustomer(meterCodeTF.getText());
+        if(Validation.isEmpty(newReading)){
+            JOptionPane.showMessageDialog(this, "Please Enter New Reading");
+            return;  
+            }
+        
+        if(Validation.isNumber(newReading)){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+        
+        if(!Validation.isPositive(Double.parseDouble(newReading))){
+            JOptionPane.showMessageDialog(this, "Please Enter Positive Number Only");
+            return;
+        }
+        
+        CustomerController cc = new CustomerController();
+        String[] data = cc.searchForCustomer(meterCodeTF.getText());
         if (data == null) {
             JOptionPane.showMessageDialog(this, "Meter not found");
             return;
         }
-        String newReading = NewReadingTF.getText();
-        String perviousReading = data[12];
+       
+
+        String perviousReading = data[11];
+        String CurrentReading =NewReadingTF.getText();
+        double expectedConsumptionRange=Double.parseDouble(CurrentReading)-Double.parseDouble(perviousReading);
+        exConsumptionRangerTF.setText(expectedConsumptionRange+"");
         
-        double expectedconsumtion =Double.parseDouble(newReading)-Double.parseDouble(perviousReading);
-        
-        exConsumptionRangerTF.setText(expectedconsumtion+"");
-        } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Invalid number format in meter code",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE
-        );
-    }
+//        exConsumptionRangerTF.setText(expectedconsumtion+"");
+//        } catch (NumberFormatException e) {
+//        JOptionPane.showMessageDialog(
+//            this,
+//            "Invalid number format in meter code",
+//            "Input Error",
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//    }
         
     }//GEN-LAST:event_ValidateButtonActionPerformed
 
@@ -256,28 +275,52 @@ public class ValidateReadingFrame extends javax.swing.JFrame {
 
     private void SearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchButtonActionPerformed
         // TODO add your handling code here:
-        try {
-        OperatorController oc = new OperatorController();
-        String[] data = oc.searchForCustomer(meterCodeTF.getText()); // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|previous Reading|tariff|date|bill
+//        try {
+        
+
+        String meterCode =meterCodeTF.getText();
+       
+        if(Validation.isEmpty(meterCode)){
+            JOptionPane.showMessageDialog(this, "Please Enter Meter Code");
+            return;  
+            }
+        
+        if(Validation.isNumber(meterCode)){
+              JOptionPane.showMessageDialog(this, "Please Enter Number Only");
+            return;  
+            }
+        
+        if(!Validation.isPositive(Double.parseDouble(meterCode))){
+            JOptionPane.showMessageDialog(this, "Please Enter Positive Number Only");
+            return;
+        }
+        
+        CustomerController cc = new CustomerController();
+        String[] data = cc.searchForCustomer(meterCode);
+        
         if (data == null) {
             JOptionPane.showMessageDialog(this, "Meter not found");
             return;
         }
         
+         // nationalId|firstName|lastName|phone|region|email|meterCode|status|contract|Reading|previous Reading|tariff|date|bill
+        
+   
+        
         String fullName = data[1] + " " + data[2];
-        String perviousReading = data[12];
+        String perviousReading = data[11];
         
         fullNameTF.setText(fullName);  
         perviousReadingTF.setText(perviousReading);
 
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Invalid number format in meter code",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE
-        );
-    }
+//    } catch (NumberFormatException e) {
+//        JOptionPane.showMessageDialog(
+//            this,
+//            "Invalid number format in meter code",
+//            "Input Error",
+//            JOptionPane.ERROR_MESSAGE
+//        );
+//    }
     }//GEN-LAST:event_SearchButtonActionPerformed
 
     private void NewReadingTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewReadingTFActionPerformed
@@ -291,7 +334,14 @@ public class ValidateReadingFrame extends javax.swing.JFrame {
     private void saveReadingbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveReadingbuttonActionPerformed
         // TODO add your handling code here:
         String newReading = NewReadingTF.getText();
-        setNewReading(newReading);
+        CustomerController cc = new CustomerController();
+        cc.setNewReading(meterCodeTF.getText(),Double.parseDouble(newReading));
+        JOptionPane.showMessageDialog(
+            this,
+            "New Reading Has Been Added"
+        );
+            
+        
     }//GEN-LAST:event_saveReadingbuttonActionPerformed
 
     /**
