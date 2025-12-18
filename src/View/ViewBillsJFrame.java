@@ -4,6 +4,8 @@
  */
 package View;
 
+import Controller.BillController;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -151,26 +153,31 @@ public class ViewBillsJFrame extends javax.swing.JFrame {
 
     private void SearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchButtonActionPerformed
         // TODO add your handling code here:
-        String billId = ((javax.swing.JTextField) BillIdTextField).getText().trim();
-    DefaultTableModel billsModel = (DefaultTableModel) BillsTable.getModel();
-    billsModel.setRowCount(0);
-    DefaultTableModel allBillsModel = (DefaultTableModel) BillsTable.getModel();
+        String billId = BillTextField.getText().trim();
 
-    for (int i = 0; i < allBillsModel.getRowCount(); i++) {
+        String[][] bills = BillController.getBillById(billId);
 
-        if (allBillsModel.getValueAt(i, 0).toString().equals(billId)) {
+        DefaultTableModel model = (DefaultTableModel) BillsTable.getModel();
 
-            billsModel.addRow(new Object[] {
-                allBillsModel.getValueAt(i, 0), // Bill id
-                allBillsModel.getValueAt(i, 1), // Meter code
-                allBillsModel.getValueAt(i, 2), // Month
-                allBillsModel.getValueAt(i, 3), // Reading
-                allBillsModel.getValueAt(i, 4), // Consumption
-                allBillsModel.getValueAt(i, 5), // Amount
-                allBillsModel.getValueAt(i, 6)  // Paid
+        model.setRowCount(0);
+
+        if (bills.length == 0) {
+            JOptionPane.showMessageDialog(this, "Bill not found");
+            return;
+        }
+
+        for (int i = 0; i < bills.length; i++) {
+            model.addRow(new Object[] {
+                bills[i][0], // Bill ID
+                bills[i][1], // Meter Code
+                bills[i][2], // Year
+                bills[i][3], // Month
+                bills[i][4], // Reading
+                bills[i][5], // Consumption
+                bills[i][6], // Amount
+                bills[i][7]  // Paid / Unpaid
             });
         }
-    }
     }//GEN-LAST:event_SearchButtonActionPerformed
 
     /**

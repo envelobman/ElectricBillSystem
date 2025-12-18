@@ -4,6 +4,7 @@
  */
 package View;
 
+import Controller.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -221,12 +222,22 @@ public class ManageUserJFrame extends javax.swing.JFrame {
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model=(DefaultTableModel)ManageUsersTable.getModel();
-        model.setValueAt(UserIdTextField.getText(),ManageUsersTable.getSelectedRow(), 0);
-        model.setValueAt(UserNameTextField.getText(),ManageUsersTable.getSelectedRow(), 1);
-        model.setValueAt(MailTextField.getText(),ManageUsersTable.getSelectedRow(), 2);
-        model.setValueAt(RoleTextField.getText(),ManageUsersTable.getSelectedRow(), 3);
-        JOptionPane.showMessageDialog(null, "User data is successfully updated");
+        String id = UserIdTextField.getText().trim();
+        String name = UserNameTextField.getText().trim();
+        String email = MailTextField.getText().trim();
+        String role = RoleTextField.getText().trim();
+
+        String msg = CustomerController.editCustomer(id, name, email, role);
+        JOptionPane.showMessageDialog(this, msg);
+        DefaultTableModel model = (DefaultTableModel) ManageUsersTable.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).equals(id)) { 
+                model.setValueAt(name, i, 1);
+                model.setValueAt(email, i, 2);
+                model.setValueAt(role, i, 3);
+                break;
+            }
+        }
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void UserIdTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UserIdTextFieldActionPerformed
@@ -235,9 +246,18 @@ public class ManageUserJFrame extends javax.swing.JFrame {
 
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model=(DefaultTableModel)ManageUsersTable.getModel();
-        model.addRow(new Object[]{UserIdTextField.getText(),UserNameTextField.getText(),MailTextField.getText(),RoleTextField.getText()});
-        JOptionPane.showMessageDialog(null, "User data is successfully enterd");
+  
+        
+        String id = UserIdTextField.getText().trim();
+        String name = UserNameTextField.getText().trim();
+        String email = MailTextField.getText().trim();
+        String role = RoleTextField.getText().trim();
+
+        String msg = CustomerController.addCustomer(id, name, email, role);
+        JOptionPane.showMessageDialog(this, msg);
+
+        DefaultTableModel model = (DefaultTableModel) ManageUsersTable.getModel();
+        model.addRow(new Object[]{id, name, email, role});
     }//GEN-LAST:event_SaveButtonActionPerformed
 
     private void RoleTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RoleTextFieldActionPerformed
@@ -254,9 +274,18 @@ public class ManageUserJFrame extends javax.swing.JFrame {
 
     private void DeletButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model=(DefaultTableModel)ManageUsersTable.getModel();
-        model.removeRow(ManageUsersTable.getSelectedRow());
-        JOptionPane.showMessageDialog(null, "User data is successfully deleted");
+        int selectedRow = ManageUsersTable.getSelectedRow();
+        if (selectedRow == -1) {
+             JOptionPane.showMessageDialog(this, "Please select a customer to delete");
+             return;
+         }
+        
+         String id = ManageUsersTable.getValueAt(selectedRow, 0).toString();
+
+          String msg =CustomerController.deleteCustomer(id);
+         JOptionPane.showMessageDialog(this, msg);
+         DefaultTableModel model = (DefaultTableModel) ManageUsersTable.getModel();
+         model.removeRow(selectedRow);
     }//GEN-LAST:event_DeletButtonActionPerformed
 
     /**

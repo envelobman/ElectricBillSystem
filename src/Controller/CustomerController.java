@@ -48,15 +48,7 @@ public class CustomerController {
     FileManager.writeCustomers(customers);
     return "Customer info updated";
 }
-    public String deleteCustomer(String meterCode) {
-    List<Customer> customers = FileManager.readCustomers();
-    boolean removed = customers.removeIf(c -> c.getMeterCode().equals(meterCode));
 
-    if (!removed) return "Customer not found";
-
-    FileManager.writeCustomers(customers);
-    return "Customer deleted";
-}
     // ---------- UPDATE READING ----------
     public String updateReading(String meterCode, double newReading) {
 
@@ -192,6 +184,66 @@ public void setNewReading(String meterCode, double monthlyReading) {
     List<String> readings = FileManager.readFile("bills.txt");
     readings.add(line);
     FileManager.writeFile("bills.txt", readings);
+}
+
+public static String  addCustomer(String id, String name, String email, String role) {
+
+    if (Validation.isEmpty(id)) return "ID is required!";
+    if (Validation.isEmpty(name)) return "Name is required!";
+    if (!Validation.isValidEmail(email)) return "Invalid Email!";
+    if (Validation.isEmpty(role)) return "Role is required!";
+
+   
+    List<String> users = FileManager.readFile("users.txt");
+
+   
+    String newUser = id + "|" + name + "|" + email + "|" + role;
+    users.add(newUser);
+
+
+    FileManager.writeFile("customers.txt", users);
+
+    return "Customer Added";
+}
+
+public static String editCustomer(String id, String name, String email, String role) {
+
+    if (Validation.isEmpty(id)) return "ID is required!";
+    if (Validation.isEmpty(name)) return "Name is required!";
+    if (!Validation.isValidEmail(email)) return "Invalid Email!";
+    if (Validation.isEmpty(role)) return "Role is required!";
+    List<String> users = FileManager.readFile("users.txt");
+    boolean found = false;
+    for (int i = 0; i < users.size(); i++) {
+        String[] parts = users.get(i).split("\\|");
+        if (parts[0].equals(id)) {  // نفس الـ ID
+            users.set(i, id + "|" + name + "|" + email + "|" + role);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) return "Customer not found";
+
+ 
+    FileManager.writeFile("customers.txt", users);
+
+    return "Customer updated";
+}
+
+
+public static String deleteCustomer(String id) {
+
+    if (Validation.isEmpty(id)) return "ID is required!";
+
+    List<String> users = FileManager.readFile("customers.txt");
+    boolean removed = users.removeIf(line -> line.split("\\|")[0].equals(id));
+
+    if (!removed) return "Customer not found";
+
+    FileManager.writeFile("customers.txt", users);
+
+    return "Customer deleted";
 }
 
 }

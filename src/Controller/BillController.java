@@ -161,4 +161,40 @@ public class BillController {
         System.out.println("Error while paying bill for meter code: " + meterCode);
     }
 }
+    
+    public static String[][] getBillById(String billId) {
+
+    List<String> bills = FileManager.readFile("bills.txt");
+    List<String[]> rows = new ArrayList<>();
+
+    for (String line : bills) {
+        String[] p = line.split("\\|");
+
+        if (p[0].equals(billId)) {
+
+            String status = p[7].equalsIgnoreCase("true") ? "Paid" : "Unpaid";
+
+            rows.add(new String[] {
+                p[0],          // billId
+                p[1],          // meterCode
+                p[2],          // year
+                p[3],          // month
+                p[4],          // reading
+                p[5],          // consumption
+                p[6],          // amount
+                status         // paid
+            });
+
+            break; // billId unique
+        }
+    }
+
+  
+    String[][] result = new String[rows.size()][8];
+    for (int i = 0; i < rows.size(); i++) {
+        result[i] = rows.get(i);
+    }
+
+    return result;
+}
 }

@@ -227,7 +227,7 @@ public class AdminLoginJform extends javax.swing.JFrame {
         }
         else{
             JOptionPane.showMessageDialog(null, "Login Error");
-            this.dispose();
+            
         }
        
 //        new adminDashBoardJFrame(x).setVisible(true);
