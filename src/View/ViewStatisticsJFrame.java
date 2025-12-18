@@ -5,6 +5,7 @@
  */
 package View;
 
+import Controller.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -158,49 +159,13 @@ public class ViewStatisticsJFrame extends javax.swing.JFrame {
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
-          String region = RegionTextField.getText().trim();
+   String region = RegionTextField.getText().trim();
+    AdminController controller = new AdminController();
+    Object[] stats = controller.getRegionStatistics(region);
 
-    DefaultTableModel model =
-            (DefaultTableModel) StatisticsTable.getModel();
-
-    int numberOfBills = 0;
-    int paidBills = 0;
-    int unpaidBills = 0;
-    double totalAmount = 0.0;
-
-    for (int i = 0; i < model.getRowCount(); i++) {
-
-        String tableRegion = model.getValueAt(i, 0).toString();
-
-        if (tableRegion.equalsIgnoreCase(region)) {
-
-            numberOfBills++;
-
-            totalAmount += Double.parseDouble(
-                    model.getValueAt(i, 2).toString()
-            );
-
-            String paidValue = model.getValueAt(i, 4).toString();
-
-            if (paidValue.equalsIgnoreCase("paid")
-                    || paidValue.equalsIgnoreCase("true")
-                    || paidValue.equalsIgnoreCase("yes")) {
-                paidBills++;
-            } else {
-                unpaidBills++;
-            }
-        }
-    }
-
+    DefaultTableModel model = (DefaultTableModel) StatisticsTable.getModel();
     model.setRowCount(0);
-
-    model.addRow(new Object[]{
-        region,
-        numberOfBills,
-        totalAmount,
-        paidBills,
-        unpaidBills
-    });
+    model.addRow(stats);
     }//GEN-LAST:event_searchButtonActionPerformed
 
     /**

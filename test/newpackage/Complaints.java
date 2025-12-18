@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 public class Complaints extends javax.swing.JFrame {
 
     /**
-     * Creates new form Complainment
+     * Creates new form Complaint
      */
     public Complaints() {
         initComponents();

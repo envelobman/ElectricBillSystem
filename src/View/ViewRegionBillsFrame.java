@@ -141,22 +141,22 @@ public class ViewRegionBillsFrame extends javax.swing.JFrame {
 
     String region = regionCB.getSelectedItem().toString();
 
-    // ننادي الكنترولير
+    
     String[][] bills = OperatorController.getBillsByRegion(region);
 
-    // نمسك الموديل
+ 
     DefaultTableModel model = (DefaultTableModel) billsTable.getModel();
 
-    // نمسح البيانات القديمة
+
     model.setRowCount(0);
 
-    // لو مفيش بيانات
+ 
     if (bills.length == 0) {
         JOptionPane.showMessageDialog(this, "No bills found for this region");
         return;
     }
 
-    // نضيف الصفوف
+    
     for (int i = 0; i < bills.length; i++) {
         model.addRow(new Object[]{
             bills[i][0], // Customer Name

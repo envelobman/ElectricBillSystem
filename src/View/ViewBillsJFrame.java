@@ -54,14 +54,14 @@ public class ViewBillsJFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Bill id", "Meter code", "Month", "Reading", "Consumption", "Amount", "Paid"
+                "Bill id", "Meter code", "Reading", "Consumption", "Amount", "Paid", "Month", "Year"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
