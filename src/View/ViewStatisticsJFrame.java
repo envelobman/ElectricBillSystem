@@ -50,12 +50,7 @@ public class ViewStatisticsJFrame extends javax.swing.JFrame {
 
         StatisticsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"new cairo",  new Integer(150),  new Integer(250000),  new Integer(100),  new Integer(50)},
-                {"maadi",  new Integer(200),  new Integer(400000),  new Integer(150),  new Integer(50)},
-                {"new nozha",  new Integer(500),  new Integer(505000),  new Integer(340),  new Integer(160)},
-                {"helwan",  new Integer(1000),  new Integer(2000440),  new Integer(730),  new Integer(270)},
-                {"elrehab",  new Integer(300),  new Integer(304000),  new Integer(120),  new Integer(180)},
-                {"abbasia",  new Integer(670),  new Integer(203000),  new Integer(470),  new Integer(200)}
+
             },
             new String [] {
                 "Region", "Number of bills", "Total amount", "Number of paid bills", "Number of unpaid bills"

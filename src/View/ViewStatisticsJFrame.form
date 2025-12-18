@@ -97,47 +97,12 @@
         <Component class="javax.swing.JTable" name="StatisticsTable">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="5" rowCount="6">
-                <Column editable="false" title="Region" type="java.lang.String">
-                  <Data value="new cairo"/>
-                  <Data value="maadi"/>
-                  <Data value="new nozha"/>
-                  <Data value="helwan"/>
-                  <Data value="elrehab"/>
-                  <Data value="abbasia"/>
-                </Column>
-                <Column editable="false" title="Number of bills" type="java.lang.Integer">
-                  <Data value="150"/>
-                  <Data value="200"/>
-                  <Data value="500"/>
-                  <Data value="1000"/>
-                  <Data value="300"/>
-                  <Data value="670"/>
-                </Column>
-                <Column editable="false" title="Total amount" type="java.lang.Integer">
-                  <Data value="250000"/>
-                  <Data value="400000"/>
-                  <Data value="505000"/>
-                  <Data value="2000440"/>
-                  <Data value="304000"/>
-                  <Data value="203000"/>
-                </Column>
-                <Column editable="false" title="Number of paid bills" type="java.lang.Integer">
-                  <Data value="100"/>
-                  <Data value="150"/>
-                  <Data value="340"/>
-                  <Data value="730"/>
-                  <Data value="120"/>
-                  <Data value="470"/>
-                </Column>
-                <Column editable="false" title="Number of unpaid bills" type="java.lang.Integer">
-                  <Data value="50"/>
-                  <Data value="50"/>
-                  <Data value="160"/>
-                  <Data value="270"/>
-                  <Data value="180"/>
-                  <Data value="200"/>
-                </Column>
+              <Table columnCount="5" rowCount="0">
+                <Column editable="false" title="Region" type="java.lang.String"/>
+                <Column editable="false" title="Number of bills" type="java.lang.Integer"/>
+                <Column editable="false" title="Total amount" type="java.lang.Integer"/>
+                <Column editable="false" title="Number of paid bills" type="java.lang.Integer"/>
+                <Column editable="false" title="Number of unpaid bills" type="java.lang.Integer"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
