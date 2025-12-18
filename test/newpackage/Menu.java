@@ -15,7 +15,7 @@ public class Menu extends javax.swing.JFrame {
      */
     public Menu() {
         initComponents();
-         setLocationRelativeTo(null);//عشان يظهر فى نص الشاشه
+         setLocationRelativeTo(null);
     }
 
     /**
@@ -134,19 +134,19 @@ public class Menu extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         PayBill p = new PayBill();
         p.setVisible(true);
-        this.dispose(); // يقفل الفرام الحالي
+        this.dispose(); 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         Reading r = new Reading();
         r.setVisible(true);
-        this.dispose(); // يقفل الفرام الحالي
+        this.dispose(); 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         Complaints c = new Complaints();
         c.setVisible(true);
-        this.dispose(); // يقفل الفرام الحالي
+        this.dispose(); 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

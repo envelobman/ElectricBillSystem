@@ -1,6 +1,8 @@
 package newpackage;
 
+import Controller.*;
 import DataStorage.*;
+import Model.*;
 import java.util.*;
 import javax.swing.JOptionPane;
 
@@ -139,7 +141,7 @@ public class PayBill extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
          Menu m = new Menu();
         m.setVisible(true);
-        this.dispose(); // يقفل الفرام الحالي
+        this.dispose(); 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextFieldMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldMActionPerformed
@@ -147,121 +149,77 @@ public class PayBill extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldMActionPerformed
 
     private void jButtonGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGActionPerformed
-                try {
-    long m = Long.parseLong(jTextFieldM.getText().trim());
 
-    // امسح أي قيمة سابقة في الحقل
-    jTextFieldT.setText("");
+                                          
+        String meterCode = jTextFieldM.getText().trim();
 
-    List<String> readBills = FileManager.readBills();
-    boolean found = false; //  للتأكد  الرقم موجود
-
-    for (String line : readBills) {
-        if (line.trim().isEmpty()) continue;
-
-        String[] parts = line.split("\\|");
-
-        if (parts.length >= 7) {
-            String meterCodeInBill = parts[1].trim();
-
-            if (meterCodeInBill.equals(String.valueOf(m))) {
-                found = true; // الرقم موجود
-                boolean paid = Boolean.parseBoolean(parts[6].trim());
-
-                if (!paid) {  // لو الفاتورة غير مدفوعة
-                    double amount = Double.parseDouble(parts[5].trim());
-                    jTextFieldT.setText(String.format("%.2f", amount));  // يحط المبلغ
-                } else { // لو الفاتورة مدفوعة
-                    jTextFieldT.setText("0.00");  // يرجع 0.0
-                }
-
-                break;  // يخرج لأن فيه فاتورة واحدة بس
-            }
+        if (meterCode.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please Write a Meter Code First", 
+                "The Field is Required", 
+                JOptionPane.WARNING_MESSAGE);
+            jTextFieldM.requestFocus();
+           return;
         }
-    }
 
-    // التنبيه لو الرقم مش موجود
-    if (!found) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Meter Code not found in the file",
-            "Not Found",
-            JOptionPane.WARNING_MESSAGE
-        );
-        jTextFieldM.requestFocus();
-        jTextFieldM.selectAll();
-    }
+        CustomerController customerCtrl = new CustomerController();
+        Customer customer = customerCtrl.getCustomer(meterCode);
 
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(
-        this,
-        "Please enter the correct Meter Code",
-        "Invalid Code",
-        JOptionPane.ERROR_MESSAGE
-    );
-    jTextFieldM.requestFocus(); // يحط المؤشر على الحقل
-    jTextFieldM.selectAll(); // يحدد النص كله
+        if (customer == null) {
+            JOptionPane.showMessageDialog(this, 
+                "The Meter Code Not Found", 
+                "Not Found", 
+                JOptionPane.ERROR_MESSAGE);
+            jTextFieldM.requestFocus();
+            jTextFieldM.selectAll();
+            jTextFieldT.setText("");
+            return;
+        }
+
+        BillController billCtrl = new BillController();
+        double totalUnpaid = billCtrl.getTotalUnpaid(meterCode);
+
+        if (totalUnpaid > 0) {
+            jTextFieldT.setText(String.format("%.2f", totalUnpaid));
+        } else {
+            jTextFieldT.setText("0.00");
+            JOptionPane.showMessageDialog(this, 
+                "There are no outstanding bills for this meter", 
+                "Already paid", 
+                JOptionPane.INFORMATION_MESSAGE);
 }
-
-
     }//GEN-LAST:event_jButtonGActionPerformed
 
     private void jButtonPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPActionPerformed
+                                      
+        String meterCode = jTextFieldM.getText().trim();
 
-    String amountText = jTextFieldT.getText().trim();
-    if (amountText.isEmpty() || amountText.equals("0.00")) {
-        JOptionPane.showMessageDialog(this,
-            "there are not any bills yet",
-            "ERROR",
-            JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-    
-    long meterCode = Long.parseLong(jTextFieldM.getText().trim());
-
-    // قراءة كل الفواتير
-    List<String> allBills = FileManager.readBills();
-    boolean billUpdated = false;
-
-    for (int i = 0; i < allBills.size(); i++) {
-        String line = allBills.get(i).trim();
-        if (line.isEmpty()) continue;
-
-        String[] parts = line.split("\\|");
-
-        if (parts.length >= 7) {
-            String billMeterCode = parts[1].trim();
-
-            if (billMeterCode.equals(String.valueOf(meterCode))) {
-                // غير الحالة إلى مدفوعة   +  صفر المبلغ
-                parts[5] = "0.00";
-                parts[6] = "true";
-
-                allBills.set(i, parts[0] + "|" + parts[1] + "|" + parts[2] + "|" + 
-                                parts[3] + "|" + parts[4] + "|" + parts[5] + "|" + parts[6]);
-                billUpdated = true;
-                break;
-            }
+        if (meterCode.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please Write a Meter Code First", 
+                "The Field is Required", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-    if (billUpdated) {
-        // حفظ التغييرات في الملف
-        FileManager.writeBills(allBills);
+        String amount = jTextFieldT.getText().trim();
+        if (amount.equals("0.00") || amount.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "There are no outstanding bills for this meter", 
+                "There are no outstanding bills", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
-        // مسح الحقل
-        jTextFieldT.setText("");
+        BillController billCtrl = new BillController();
+        billCtrl.payBillByMeter(meterCode);
 
+        jTextFieldT.setText("0.00");
         JOptionPane.showMessageDialog(this,
-            "the bill has been paid",
-            "paid",
+            "The bill has been successfully paid!",
+            "The Payment Has Been made",
             JOptionPane.INFORMATION_MESSAGE);
-    } else {
-        JOptionPane.showMessageDialog(this,
-            "there are a problem in paiment",
-            "ERROR!",
-            JOptionPane.ERROR_MESSAGE);
-    }
-}
+    
     }//GEN-LAST:event_jButtonPActionPerformed
 
     /**

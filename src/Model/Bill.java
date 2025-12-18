@@ -58,8 +58,10 @@ public void updateReading(double newReading) {
 public String getBillId() { return billId; }
 public String getMeterCode() { return meterCode; }
 public String getMonth() { return month; }
+public String getYear(){ return year;}
 public double getReading() { return reading; }
 public double getConsumption() { return consumption; }
+
 }
 
 /*   // شكل   (file)

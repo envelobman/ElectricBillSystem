@@ -1,7 +1,7 @@
 package newpackage;
 
 
-import java.util.*;
+import Controller.*;
 import javax.swing.JOptionPane;
 
 /*
@@ -132,7 +132,7 @@ public class Complaints extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         Menu m = new Menu();
         m.setVisible(true);
-        this.dispose(); // يقفل الفرام الحالي
+        this.dispose(); 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextFieldMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldMActionPerformed
@@ -140,89 +140,67 @@ public class Complaints extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldMActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    String meterInput = jTextFieldM.getText().trim();
-    String complaintText = jTextArea2.getText().trim();
-  
-    try {
-        // تحقق انه الميتر كود مش فاضى
-        long m = Long.parseLong(meterInput);
-       
-        // تحقق إن الشكوى مش فاضية
-        if (complaintText.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                "Please write your complaint",
-                "Empty Complaint",
+        
+        
+        
+        String meterCode = jTextFieldM.getText().trim();
+        String complaintText = jTextArea2.getText().trim();
+
+        
+        if (Validation.isEmpty(meterCode)) {
+            JOptionPane.showMessageDialog(this, 
+                "Please Write a Meter Code First", 
+                "The Field is Required", 
+                JOptionPane.WARNING_MESSAGE);
+            jTextFieldM.requestFocus();
+            return;
+        }
+
+        
+        if (Validation.isEmpty(complaintText)) {
+            JOptionPane.showMessageDialog(this, 
+                "Please Write a Complain First", 
+                "The Field is Required", 
                 JOptionPane.WARNING_MESSAGE);
             jTextArea2.requestFocus();
             return;
         }
 
-        // ==== الجزء اللي زودته: تحقق من وجود الميتر كود في meters.txt (3 أجزاء أو أقل) ====
-        List<String> allMeters = FileManager.readMeters();
-        boolean meterExists = false;
+        
+        Controller.CustomerController customerCtrl = new Controller.CustomerController();
+        Model.Customer customer = customerCtrl.getCustomer(meterCode);
 
-        for (String line : allMeters) {
-            if (line.trim().isEmpty()) continue;
-
-            String[] parts = line.split("\\|");
-
-            if (parts.length >= 3) {  // الجزء الأول هو  meterCode
-                String meterInFile = parts[0].trim();
-
-                if (meterInFile.equals(String.valueOf(m))) {
-                    meterExists = true;
-                    break;
-                }
-            }
-        }
-
-        if (!meterExists) {
-            JOptionPane.showMessageDialog(this,
-                "Meter Code not found in the system!",
-                "Invalid Meter Code",
-                JOptionPane.WARNING_MESSAGE);
+        if (customer == null) {
+            JOptionPane.showMessageDialog(this, 
+                "The Meter Code Not Found", 
+                "Wrong Meter Code", 
+                JOptionPane.ERROR_MESSAGE);
             jTextFieldM.requestFocus();
             jTextFieldM.selectAll();
             return;
         }
-        // توليد رقم الشكوى عشوائي (C + 4 أرقام)
-        String complaintNumber = "C" + (int)(Math.random() * 9000 + 1000);
 
-        // السطر اللي هيتحفظ: meterCode|complaintNumber|text 
-        String newComplaint = m + "|" + complaintNumber + "|" + complaintText;
+       
+        Controller.ComplaintController complaintCtrl = new Controller.ComplaintController();
+        Model.Complaint newComplaint = complaintCtrl.addComplaint(meterCode, complaintText);
 
-        // قراءة الملف وإضافة السطر الجديد
-        List<String> allComplaints = FileManager.readComplaints();
-        allComplaints.add(newComplaint);
+        if (newComplaint != null) {
+            JOptionPane.showMessageDialog(this,
+                "The complaint has been successfully submitted! Complaint number: " + newComplaint.getComplaintId(),
+                "Sent",
+                JOptionPane.INFORMATION_MESSAGE);
 
-        // حفظ الملف
-        FileManager.writeComplaints(allComplaints);
-
-        JOptionPane.showMessageDialog(this,
-            "Complaint has been sent successfully!\nComplaint Number: " + complaintNumber,
-            "Sent",
-            JOptionPane.INFORMATION_MESSAGE);
-
-        // مسح الحقول بعد الإرسال
-        jTextFieldM.setText("");
-        jTextArea2.setText("");
-        jTextFieldM.requestFocus();
-
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Please enter the correct Meter Code",
-            "Invalid Code",
-            JOptionPane.ERROR_MESSAGE
-        );
-        jTextFieldM.requestFocus();
-        jTextFieldM.selectAll();
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-            "An error occurred while sending the complaint",
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
-    }         
+            
+            jTextFieldM.setText("");
+            jTextArea2.setText("");
+            jTextFieldM.requestFocus();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "An error occurred while submitting the complaint. Please try again.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }       
+    
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

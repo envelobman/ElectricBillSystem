@@ -41,24 +41,24 @@ public class ComplaintController {
         return result;
     }
     
-    public String sendComplaint(String meterCode, String complaintText) {
-
-        if (Validation.isEmpty(meterCode))
-            return "Meter code is required";
-
-        if (Validation.isEmpty(complaintText))
-            return "Complaint text is required";
-
-        String complaintId = "C" + (int)(Math.random() * 9000 + 1000);
-
-        String line = complaintId + "|" + meterCode + "|" + complaintText;
-
-        List<String> complaints = FileManager.readFile("complaints.txt");
-        complaints.add(line);
-        FileManager.writeFile("complaints.txt", complaints);
-
-        return "Complaint sent successfully";
-    }
-    
+//    public String sendComplaint(String meterCode, String complaintText) {
+//
+//        if (Validation.isEmpty(meterCode))
+//            return "Meter code is required";
+//
+//        if (Validation.isEmpty(complaintText))
+//            return "Complaint text is required";
+//
+//        String complaintId = "C" + (int)(Math.random() * 9000 + 1000);
+//
+//        String line = complaintId + "|" + meterCode + "|" + complaintText;
+//
+//        List<String> complaints = FileManager.readFile("complaints.txt");
+//        complaints.add(line);
+//        FileManager.writeFile("complaints.txt", complaints);
+//
+//        return "Complaint sent successfully";
+//    }
+//    
     
 }

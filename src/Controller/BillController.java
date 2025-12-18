@@ -10,23 +10,48 @@ public class BillController {
 
     // ---------- CREATE BILL ----------
     public Bill createBill(Customer c, double currentReading, String year, String month) {
+    double consumption = c.calculateConsumption(currentReading);
+    double amount = tariff.calculateAmount(consumption);
 
-        double consumption = c.calculateConsumption(currentReading);
-        double amount = tariff.calculateAmount(consumption);
+    // قراءة كل الفواتير من الملف
+    List<Bill> bills = FileManager.readBills();
 
-        String billId = "B" + (int)(Math.random() * 9000 + 1000);
+    int maxId = 1000; // بداية العد لو مفيش فواتير
+    boolean isPaid = false; // الحالة الافتراضية
 
-        return new Bill(
-                billId,
-                c.getMeterCode(),
-                year,
-                month,
-                currentReading,
-                consumption,
-                amount,
-                false
-        );
+    for (Bill b : bills) {
+        // شيل الـ B عشان نجيب أعلى رقم ID
+        String idStr = b.getBillId().replace("B", "");
+        try {
+            int id = Integer.parseInt(idStr);
+            if (id > maxId) {
+                maxId = id;
+            }
+        } catch (NumberFormatException e) {
+            // تجاهل أي ID مش صالح
+        }
+
+        // لو فيه فاتورة بنفس الكustomer وmonth & year نفسهم
+        if (b.getMeterCode().equals(c.getMeterCode())
+            && b.getMonth().equals(month)
+            && b.getYear().equals(year)) {
+            isPaid = b.isPaid(); // خد الحالة من الملف
+        }
     }
+
+    String billId = "B" + (maxId + 1); // اعمل ID جديد بالترتيب
+
+    return new Bill(
+            billId,
+            c.getMeterCode(),
+            year,
+            month,
+            currentReading,
+            consumption,
+            amount,
+            isPaid
+    );
+}
 
     // ---------- SAVE BILL ----------
     public void saveBill(Bill bill) {

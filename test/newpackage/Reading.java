@@ -1,6 +1,7 @@
 package newpackage;
 
 
+import Controller.*;
 import java.util.*;
 import javax.swing.JOptionPane;
 
@@ -122,84 +123,78 @@ public class Reading extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
          Menu m = new Menu();
         m.setVisible(true);
-        this.dispose(); // يقفل الفرام الحالي
+        this.dispose(); 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButtonAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAActionPerformed
-long m;
-long r;
-// check الأول
-try {
-    m = Long.parseLong(jTextFieldM.getText().trim());
-   
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(
-        this,
-        "Please enter the correct Metre Code",
-        "Invalid Code",
-        JOptionPane.ERROR_MESSAGE
-    );
-    jTextFieldM.requestFocus(); // يحط المؤشر على الحقل
-    jTextFieldM.selectAll(); // يحدد النص كله
-    return; // وقف
-}
-// check التاني (مش هيدخل هنا إلا لو الأول صح)
-try {
-    r = Long.parseLong(jTextFieldR.getText().trim());
-    
-    List<String> allMeters = FileManager.readMeters();
-    boolean found = false;
+                                        
+        String meterCodeStr = jTextFieldM.getText().trim();
+        String readingStr = jTextFieldR.getText().trim();
 
-    for (int i = 0; i < allMeters.size(); i++) {
-        String line = allMeters.get(i).trim();
-        if (line.isEmpty()) continue;
+        
+        if (meterCodeStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please Write a Meter Code First", 
+                "The Field is Required", 
+                JOptionPane.WARNING_MESSAGE);
+            jTextFieldM.requestFocus();
+            return;
+        }
 
-        String[] parts = line.split("\\|");
+        if (readingStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Enter the monthly reading first", 
+                "The Field is Required", 
+                JOptionPane.WARNING_MESSAGE);
+            jTextFieldR.requestFocus();
+            return;
+        }
 
-        if (parts.length >= 2) {  // meterCode|currentReading 
-            String meterInFile = parts[0].trim();
+        double newReading;
+        try {
+            newReading = Double.parseDouble(readingStr);
+            if (newReading < 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "The reading must be a positive number.", 
+                "The reading not right", 
+                JOptionPane.ERROR_MESSAGE);
+            jTextFieldR.requestFocus();
+            jTextFieldR.selectAll();
+            return;
+        }
 
-            if (meterInFile.equals(String.valueOf(m))) {
-                // تحديث القراءة 
-                parts[1] = String.valueOf(r);
+       
+        CustomerController customerCtrl = new CustomerController();
+        String result = customerCtrl.updateReading(meterCodeStr, newReading);
 
-                // جمع السطر  
-                allMeters.set(i, parts[0] + "|" + parts[1]);
+        if (result.equals("Reading updated")) {
+            JOptionPane.showMessageDialog(this, 
+                "The reading was added successfully: " + newReading, 
+                "Saved", 
+                JOptionPane.INFORMATION_MESSAGE);
 
-                found = true;
-                break;
+            
+            jTextFieldM.setText("");
+            jTextFieldR.setText("");
+            jTextFieldM.requestFocus();
+        } else {
+            
+            JOptionPane.showMessageDialog(this, 
+                result, 
+                "خطأ", 
+                JOptionPane.ERROR_MESSAGE);
+            if (result.contains("not found")) {
+                jTextFieldM.requestFocus();
+                jTextFieldM.selectAll();
+            } else {
+                jTextFieldR.requestFocus();
+                jTextFieldR.selectAll();
             }
         }
-    }
-
-    if (found) {
-        FileManager.writeMeters(allMeters);
-
-        JOptionPane.showMessageDialog(this, 
-            "Reading has been Done and Saved: " + r ,
-            "Success",
-            JOptionPane.INFORMATION_MESSAGE);
-
-        // مسح الحقول
-        jTextFieldM.setText("");
-        jTextFieldR.setText("");
-    } else {
-        JOptionPane.showMessageDialog(this, 
-            "Meter Code not found in the system",
-            "Not Found",
-            JOptionPane.WARNING_MESSAGE);
-    }
-
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(
-        this,
-        "Please enter the correct Reading",
-        "Invalid Read",
-        JOptionPane.ERROR_MESSAGE
-    );
-        jTextFieldR.requestFocus(); // يحط المؤشر على الحقل
-        jTextFieldR.selectAll(); // يحدد النص كله
-}
+    
     }//GEN-LAST:event_jButtonAActionPerformed
 
     private void jTextFieldMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldMActionPerformed

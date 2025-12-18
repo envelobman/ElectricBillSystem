@@ -18,7 +18,9 @@ public class Complaint {
         this.customerId = customerId;
         this.text = text;
     }
-
+    public String getComplaintId(){
+        return complaintId;
+    }
     @Override
     public String toString() {
         return complaintId + "|" + customerId + "|" + text;
